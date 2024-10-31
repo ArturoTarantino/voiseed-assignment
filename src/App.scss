@@ -9,3 +9,22 @@
     color: black;
     border: none;
 }
+
+.project-box {
+    background-color: rgb(37, 36, 36);
+    border-radius: 10px;
+    padding: 10px;
+    height: 100%;
+
+    thead {
+        tr {
+            th {
+                color: white;
+            }
+        }
+    }
+
+    tr {
+        cursor: pointer;
+    }
+}

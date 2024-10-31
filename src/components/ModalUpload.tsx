@@ -1,6 +1,6 @@
 import {
     Button,
-    Modal as ChakraModel,
+    Modal,
     ModalOverlay,
     ModalContent,
     ModalHeader,
@@ -23,21 +23,17 @@ interface ErrorObject {
     video: boolean;
 }
 
-const Modal = ({ isOpen, onClickClose, startProject }: Props) => {
+const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
     
     const [errorObject, setErrorObject] = useState<ErrorObject>({ sub: false, video: false });
 
-    // TODO 
-    // implement remove function to clean storage and update of single file
-    // can move validation inside file upload ?
-
     useEffect(() => {
         setErrorObject({ sub: false, video: false });
-    }, []);
-
+    }, [isOpen]);
+    
     const validateUpload = () => {
 
-        const isSubUploaded = !!localStorage.getItem('sub-text');
+        const isSubUploaded = !!localStorage.getItem('subtitles');
         const isVideoUploaded = !!localStorage.getItem('video');
 
         const canStartProject = isSubUploaded && isVideoUploaded;
@@ -53,7 +49,7 @@ const Modal = ({ isOpen, onClickClose, startProject }: Props) => {
     }
 
     return (
-        <ChakraModel
+        <Modal
             isOpen={isOpen}
             onClose={onClickClose}
             isCentered
@@ -98,8 +94,8 @@ const Modal = ({ isOpen, onClickClose, startProject }: Props) => {
                 </ModalContent>
 
             </Box>
-        </ChakraModel>
+        </Modal>
     )
 }
 
-export default Modal;
+export default ModalUpload;

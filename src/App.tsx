@@ -1,29 +1,29 @@
 import { useState } from 'react';
 import './App.scss';
-import Intro from './components/Intro';
-import Modal from './components/Modal';
+import ProjectStarter from './components/ProjectStarter';
+import ModalUpload from './components/ModalUpload';
+import Project from './components/Project';
 
 const App = () => {
   
-  const alreadyOpenProject = !!localStorage.getItem('sub-text') && !!localStorage.getItem('video');
+  const alreadyOpenProject = !!localStorage.getItem('subtitles') && !!localStorage.getItem('video');
   const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
   const [startProject, setStartProject] = useState<boolean>(alreadyOpenProject ?? false);
 
-  console.log(openProjectModal)
   return (
     <>
       <div className='App'>
         {
           startProject ?
-            <>hello boys</>
+            <Project />
             :
-            <Intro
+            <ProjectStarter
               onClickOpen={() => setOpenProjectModal(true)}
             />
         }
       </div>
 
-      <Modal
+      <ModalUpload
         isOpen={openProjectModal}
         onClickClose={() => setOpenProjectModal(false)}
         startProject={() => setStartProject(true)}

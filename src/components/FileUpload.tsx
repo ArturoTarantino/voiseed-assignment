@@ -3,7 +3,12 @@ import {
     Button,
     Box
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { 
+    useEffect, 
+    useRef, 
+    useState 
+} from 'react';
+import { parseSRT } from '../utils/parseSRT';
 
 interface Props {
     labelText: string;
@@ -25,15 +30,17 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
 
         if(file) {
             const reader = new FileReader();
+
             if(file?.type === 'application/x-subrip') {
                 reader.onload = (event) => {
-                    if(event.target) localStorage.setItem("sub-text", JSON.stringify(event.target.result));
+                    if(event.target) localStorage.setItem("subtitles", JSON.stringify(parseSRT(event.target.result as string)));
                 }
             } else if(file?.type.includes('video/')) {
                 reader.onload = (event) => {
                     if(event.target) localStorage.setItem("video", JSON.stringify(event.target.result));
                 }
             }
+            
             reader.readAsText(file);
         }
     }, [file]);

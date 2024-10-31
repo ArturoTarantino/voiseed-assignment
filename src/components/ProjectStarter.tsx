@@ -12,10 +12,10 @@ interface Props {
   onClickOpen: () => void;
 }
 
-const Intro = memo(({ onClickOpen }: Props) => {
+const ProjectStarter = memo(({ onClickOpen }: Props) => {
 
   useEffect(() => {
-    console.log('render Intro');
+    console.log('render ProjectStarter');
   }, [])
 
   return (
@@ -56,4 +56,4 @@ const Intro = memo(({ onClickOpen }: Props) => {
 }
 );
 
-export default Intro;
+export default ProjectStarter;
