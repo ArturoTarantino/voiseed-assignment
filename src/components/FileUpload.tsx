@@ -3,10 +3,10 @@ import {
     Button,
     Box
 } from '@chakra-ui/react';
-import { 
-    useEffect, 
-    useRef, 
-    useState 
+import {
+    useEffect,
+    useRef,
+    useState
 } from 'react';
 import { parseSRT } from '../utils/parseSRT';
 
@@ -28,20 +28,32 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
 
     useEffect(() => {
 
-        if(file) {
+        if (file) {
             const reader = new FileReader();
 
-            if(file?.type === 'application/x-subrip') {
+            if (file?.type === 'application/x-subrip') {
                 reader.onload = (event) => {
-                    if(event.target) localStorage.setItem("subtitles", JSON.stringify(parseSRT(event.target.result as string)));
+                    if (event.target) localStorage.setItem("subtitles", JSON.stringify(parseSRT(event.target.result as string)));
                 }
-            } else if(file?.type.includes('video/')) {
+                reader.readAsText(file);
+            } else if (file?.type.includes('video/')) {
+
                 reader.onload = (event) => {
                     if(event.target) localStorage.setItem("video", JSON.stringify(event.target.result));
                 }
+                reader.readAsText(file);
+
+                const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(file);
+
+                videoElement.onloadedmetadata = function () {
+
+                    const videoDuration = videoElement.duration;
+                    localStorage.setItem("videoDuration", JSON.stringify(videoDuration));
+                    URL.revokeObjectURL(videoElement.src);
+                    videoElement.remove();
+                };
             }
-            
-            reader.readAsText(file);
         }
     }, [file]);
 
@@ -69,12 +81,12 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
                 >
                     Upload File
                 </Button>
-                { file && <span style={{ marginLeft: '15px', verticalAlign: 'text-top' }} >{file.name}</span> }
+                {file && <span style={{ marginLeft: '15px', verticalAlign: 'text-top' }} >{file.name}</span>}
             </Box>
-            { 
-                errorMessage && <div style={{ color:'red' }}>
-                   { acceptedFile === '.srt' ? 'You need to upload an .srt file' : 'You need to upload a video file' }
-                </div> 
+            {
+                errorMessage && <div style={{ color: 'red' }}>
+                    {acceptedFile === '.srt' ? 'You need to upload an .srt file' : 'You need to upload a video file'}
+                </div>
             }
         </Box>
     )

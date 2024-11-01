@@ -6,7 +6,6 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
     Box,
     Text,
     Textarea
@@ -19,6 +18,12 @@ interface Props {
     isOpen: boolean;
     onClickClose: () => void;
     subtitle: SubTitleToEdit | null;
+    saveSubtitle: (subtitle: {
+        start: string;
+        end: string;
+        duration: string;
+        text: string;
+    }, index: number) => void;
 }
 
 interface SubTitleToEdit {
@@ -35,7 +40,7 @@ export interface ValidateTime {
     nextStartTime: string | undefined;
 }
 
-const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
+const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Props) => {
 
     if (!subtitle) {
         return null;
@@ -44,19 +49,22 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
         previousEndTime: undefined,
         nextStartTime: undefined
     });
-    const [subtitleToUpdate, setSubtitleToUpdate] = useState<any>(subtitle);
+    const [subtitleToUpdate, setSubtitleToUpdate] = useState<SubTitleToEdit>(subtitle);
     const [subTitleError, setSubTitleError] = useState<Record<string, boolean>>({
         start: false,
         end: false,
         text: false
     });
-
+    
     useEffect(() => {
 
         setValidateTimeObject({
             previousEndTime: subtitle.index > 0 ? subtitle.subtitlesList[subtitle.index - 1]?.end : undefined,
             nextStartTime: subtitle.index + 1 < subtitle.subtitlesList.length ? subtitle.subtitlesList[subtitle.index + 1]?.start : undefined
         });
+    }, [subtitle]);
+
+    useEffect(() => {
         setSubtitleToUpdate(subtitle);
     }, [subtitle]);
 
@@ -66,8 +74,8 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
         seconds: number;
         type: string;
     }) => {
-        const timeInSeconds = inputTime.hours * 3600 + inputTime.minutes * 60 + inputTime.seconds;
 
+        const timeInSeconds = inputTime.hours * 3600 + inputTime.minutes * 60 + inputTime.seconds;
         const previousEndTimeInSeconds = validateTimeObject.previousEndTime
             ? timeToSeconds(validateTimeObject.previousEndTime)
             : 0;
@@ -75,7 +83,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
             ? timeToSeconds(validateTimeObject.nextStartTime)
             : Infinity;
 
-        const durationInSeconds = timeToSeconds(subtitle.subtitlesList[subtitle.subtitlesList.length - 1].end);
+        const durationInSeconds = JSON.parse(localStorage.getItem('videoDuration') as string);
 
         let newSubtitleTime = { ...subtitleToUpdate };
         let isValid = false;
@@ -134,7 +142,6 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Edit Subtitle #{subtitle.index + 1}</ModalHeader>
-                    <ModalCloseButton />
 
                     <ModalBody
                         display='flex'
@@ -214,7 +221,14 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle }: Props) => {
 
                         <Button
                             colorScheme='gray'
-                            onClick={() => console.log('save subtitle')}
+                            onClick={() => {
+                                saveSubtitle({
+                                    start: subtitleToUpdate.start,
+                                    end: subtitleToUpdate.end,
+                                    text: subtitleToUpdate.text,
+                                    duration: subtitleToUpdate.duration,
+                                }, subtitleToUpdate.index)
+                            }}
                             disabled={subTitleError.start || subTitleError.end || subTitleError.text}
                         >
                             Save

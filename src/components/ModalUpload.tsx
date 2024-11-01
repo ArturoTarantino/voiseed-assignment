@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import FileUpload from './FileUpload';
 import { useEffect, useState } from 'react';
+import { timeToSeconds } from '../utils/timeToSeconds';
 
 interface Props {
     isOpen: boolean;
@@ -32,7 +33,7 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
     }, [isOpen]);
     
     const validateUpload = () => {
-
+        
         const isSubUploaded = !!localStorage.getItem('subtitles');
         const isVideoUploaded = !!localStorage.getItem('video');
 
@@ -41,10 +42,21 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
         if(!canStartProject) {
             setErrorObject({ sub: !isSubUploaded, video: !isVideoUploaded });
         } else {
-            setErrorObject({ sub: false, video: false });
-            onClickClose();
-            // CAN ADD A FAKE LOADING or a SKELETON in state 0 upload
-            startProject();
+
+            const subtitles = JSON.parse(localStorage.getItem('subtitles') as string);
+            const endTimeLastSub = timeToSeconds(subtitles[subtitles.length - 1].end);
+            const videoDuration = JSON.parse(localStorage.getItem('videoDuration') as string);
+
+            const isDurationSubValid = endTimeLastSub <= videoDuration;
+            if(isDurationSubValid) {
+                setErrorObject({ sub: false, video: false });
+                onClickClose();
+                // CAN ADD A FAKE LOADING or a SKELETON in state 0 upload
+                startProject();
+            } else {
+                // can add message for differentiate errors
+                setErrorObject({ sub: true, video: false });
+            }
         }
     }
 

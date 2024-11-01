@@ -25,7 +25,7 @@ export const parseSRT = (srtContent: string): {
     });
 }
 
-const calculateDuration = (start: string, end: string): string => {
+export const calculateDuration = (start: string, end: string): string => {
     const startParts = start.split(':').map(Number);
     const endParts = end.split(':').map(Number);
 

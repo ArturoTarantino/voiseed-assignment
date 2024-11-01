@@ -12,6 +12,7 @@ import {
 import ModalEditSubtitle from "./ModalEditSubtitle";
 import PencilIcon from '../assets/edit.svg';
 import MergeIcon from '../assets/merge.svg';
+import { calculateDuration } from "../utils/parseSRT";
 
 interface Props {
     start: string;
@@ -44,6 +45,19 @@ const SubTitleBox = () => {
             subtitlesList: subTitles
         }
         setModalContent(editingSub);
+    }
+
+    const saveSubtitle = (subtitle: Props, index: number) => {
+
+        const subToSave = {
+            ...subtitle,
+            duration: calculateDuration(subtitle.start, subtitle.end)
+        }
+        const updateSubs  = [...subTitles];
+        updateSubs[index] = subToSave;
+        localStorage.setItem('subtitles', JSON.stringify(updateSubs));
+        setSubTitles(updateSubs);
+        setIsEditing(false);
     }
 
     return (
@@ -130,6 +144,7 @@ const SubTitleBox = () => {
                 subtitle={modalContent}
                 isOpen={isEditing}
                 onClickClose={() => setIsEditing(false)}
+                saveSubtitle={saveSubtitle}
             />
         </Box>
     )
