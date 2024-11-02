@@ -1,5 +1,5 @@
 import { Box, Tooltip } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
     Table,
     Thead,
@@ -29,14 +29,14 @@ interface ModalContent extends Subtitle {
     subtitlesList: Subtitle[]
 }
 
-const SubTitleBox = () => {
+const SubTitleBox = memo(() => {
 
     const [subTitles, setSubTitles] = useState<Subtitle[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isMerging, setIsMerging] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-    const { setStartTime } = useSubtitles();
+    const { setStartTime, currentTime } = useSubtitles();
 
     useEffect(() => {
         setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
@@ -122,8 +122,14 @@ const SubTitleBox = () => {
                                     `${subTitle.text.substring(0, 30)}...` :
                                     null;
 
+                                const isActive = currentTime >= timeToSeconds(subTitle.start) && currentTime <= timeToSeconds(subTitle.end);
+                                
                                 return (
-                                    <Tr key={index} onClick={() => handleSubtitleClick(subTitle.start)}>
+                                    <Tr key={index} onClick={() => handleSubtitleClick(subTitle.start)} style={
+                                        isActive ? {
+                                            backgroundColor: 'yellow'
+                                        } : {}
+                                    }>
                                         <Td>{index + 1}</Td>
                                         <Td>{subTitle.start}</Td>
                                         <Td>{subTitle.end}</Td>
@@ -199,6 +205,6 @@ const SubTitleBox = () => {
             />
         </Box>
     )
-}
+});
 
 export default SubTitleBox;

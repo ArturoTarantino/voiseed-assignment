@@ -10,7 +10,7 @@ const VideoPlayer = () => {
     const [subVTTURL, setSubVTTURL] = useState<string | null>(null);
     const playerRef = useRef<ReactPlayer | null>(null);
 
-    const { startTime } = useSubtitles();
+    const { startTime, setCurrentTime } = useSubtitles();
 
     useEffect(() => {
 
@@ -32,7 +32,11 @@ const VideoPlayer = () => {
         if (startTime !== null && playerRef.current) {
             playerRef.current.seekTo(startTime);
         }
-    }, [startTime]); 
+    }, [startTime]);
+
+    const handleProgress = (progress: { playedSeconds: number }) => {
+        setCurrentTime(progress.playedSeconds)
+    }
 
     return (
         <Box
@@ -64,6 +68,7 @@ const VideoPlayer = () => {
                             }
                         }}
                         ref={playerRef}
+                        onProgress={handleProgress}
                     />
                 </div>
                     // <video style={{ flexGrow: 1 }} src={videoSource} controls width={'100%'}/>
