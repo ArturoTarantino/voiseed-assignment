@@ -5,6 +5,7 @@ import {
 import SubTitleBox from "./SubTitleBox";
 import VideoPlayer from "./VideoPlayer";
 import Waveform from "./Waveform";
+import { SubtitleProvider } from "../context/SubtitleContext";
 
 const Project = () => {
 
@@ -24,13 +25,15 @@ const Project = () => {
                 height={'70%'}
                 width={'100%'}
             >
-                <Box gridColumn='span 6' height='100%'>
-                    <SubTitleBox />
-                </Box>
+                <SubtitleProvider>
+                    <Box gridColumn='span 6' height='100%'>
+                        <SubTitleBox />
+                    </Box>
 
-                <Box gridColumn='span 4' height='100%'>
-                    <VideoPlayer />
-                </Box>
+                    <Box gridColumn='span 4' height='100%'>
+                        <VideoPlayer />
+                    </Box>
+                </SubtitleProvider>
 
             </SimpleGrid>
 

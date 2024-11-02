@@ -39,9 +39,14 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
             } else if (file?.type.includes('video/')) {
 
                 reader.onload = (event) => {
-                    if(event.target) localStorage.setItem("video", JSON.stringify(event.target.result));
-                }
-                reader.readAsText(file);
+
+                    const result = event.target?.result;
+                    if (result && result instanceof ArrayBuffer) {
+                        const blob = new Blob([result], { type: file.type });
+                        localStorage.setItem("video", JSON.stringify(blob));
+                    }
+                };
+                reader.readAsArrayBuffer(file);
 
                 const videoElement = document.createElement('video');
                 videoElement.src = URL.createObjectURL(file);

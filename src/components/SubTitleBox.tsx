@@ -14,6 +14,8 @@ import PencilIcon from '../assets/edit.svg';
 import MergeIcon from '../assets/merge.svg';
 import { calculateDuration } from "../utils/parseSRT";
 import ModalMergeSubtitle from "./ModalMergeSubtitle";
+import { timeToSeconds } from "../utils/timeToSeconds";
+import { useSubtitles } from "../context/SubtitleContext";
 
 export interface Subtitle {
     start: string;
@@ -33,6 +35,8 @@ const SubTitleBox = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isMerging, setIsMerging] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<ModalContent | null>(null);
+
+    const { setStartTime } = useSubtitles();
 
     useEffect(() => {
         setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
@@ -86,6 +90,11 @@ const SubTitleBox = () => {
 
     }
 
+    const handleSubtitleClick = (start: string) => {
+        const startInSeconds = timeToSeconds(start);
+        setStartTime(startInSeconds);
+    }
+
     return (
         <Box
             className='project-box'
@@ -114,7 +123,7 @@ const SubTitleBox = () => {
                                     null;
 
                                 return (
-                                    <Tr key={index} onClick={() => console.log('clicked')}>
+                                    <Tr key={index} onClick={() => handleSubtitleClick(subTitle.start)}>
                                         <Td>{index + 1}</Td>
                                         <Td>{subTitle.start}</Td>
                                         <Td>{subTitle.end}</Td>

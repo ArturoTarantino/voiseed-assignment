@@ -40,3 +40,25 @@ export const calculateDuration = (start: string, end: string): string => {
 
     return `${hours}:${minutes}:${seconds}`;
 };
+
+export const convertParsedSRTToVTT = (parsedSRT: {
+    start: string;
+    end: string;
+    text: string;
+}[]) => {
+    let vtt = 'WEBVTT\n\n';
+    
+    parsedSRT.forEach((subtitle: {
+        start: string;
+        end: string;
+        text: string;
+    }) => {
+        const start = `${subtitle.start}.000`;
+        const end = `${subtitle.end}.000`;
+
+        vtt += `${start} --> ${end}\n`;
+        vtt += `${subtitle.text}\n\n`;
+    });
+
+    return vtt.trim();
+};
