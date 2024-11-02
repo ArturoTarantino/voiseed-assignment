@@ -13,51 +13,77 @@ import ModalEditSubtitle from "./ModalEditSubtitle";
 import PencilIcon from '../assets/edit.svg';
 import MergeIcon from '../assets/merge.svg';
 import { calculateDuration } from "../utils/parseSRT";
+import ModalMergeSubtitle from "./ModalMergeSubtitle";
 
-interface Props {
+export interface Subtitle {
     start: string;
     end: string;
     duration: string;
     text: string;
 }
 
-interface ModalContent extends Props {
+interface ModalContent extends Subtitle {
     index: number;
-    subtitlesList: Props[]
+    subtitlesList: Subtitle[]
 }
 
 const SubTitleBox = () => {
 
-    const [subTitles, setSubTitles] = useState<Props[]>([]);
+    const [subTitles, setSubTitles] = useState<Subtitle[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isMerging, setIsMerging] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
     useEffect(() => {
         setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
     }, []);
 
-    const editSubtitle = (subtitle: Props, index: number) => {
+    const editSubtitle = (subtitle: Subtitle, index: number) => {
 
-        setIsEditing(true);
         const editingSub = {
             ...subtitle,
             index: index,
             subtitlesList: subTitles
         }
+        setIsEditing(true);
         setModalContent(editingSub);
     }
 
-    const saveSubtitle = (subtitle: Props, index: number) => {
-
-        const subToSave = {
+    const mergeSubTitles = (subtitle: Subtitle, index: number) => {
+        setModalContent({
             ...subtitle,
-            duration: calculateDuration(subtitle.start, subtitle.end)
+            index: index,
+            subtitlesList: subTitles
+        })
+        setIsMerging(true);
+    }
+
+    const saveSubtitle = (subtitle: Subtitle, index: number, operation: string) => {
+
+        if (operation === 'edit') {
+
+            const subToSave = {
+                ...subtitle,
+                duration: calculateDuration(subtitle.start, subtitle.end)
+            }
+            const updateSubs = [...subTitles];
+            updateSubs[index] = subToSave;
+            localStorage.setItem('subtitles', JSON.stringify(updateSubs));
+            setSubTitles(updateSubs);
+            setIsEditing(false);
+
+        } else if (operation === 'merge') {
+
+            const updateSubs = [...subTitles]
+                .map((sub: Subtitle, i) => {
+                    if (i === index) sub = subtitle;
+                    return sub;
+                }).filter((_, i) => i !== index + 1);
+            localStorage.setItem('subtitles', JSON.stringify(updateSubs));
+            setSubTitles(updateSubs);
+            setIsMerging(false);
         }
-        const updateSubs  = [...subTitles];
-        updateSubs[index] = subToSave;
-        localStorage.setItem('subtitles', JSON.stringify(updateSubs));
-        setSubTitles(updateSubs);
-        setIsEditing(false);
+
     }
 
     return (
@@ -81,7 +107,7 @@ const SubTitleBox = () => {
                     </Thead>
                     <Tbody>
                         {
-                            subTitles.map((subTitle: Props, index: number) => {
+                            subTitles.map((subTitle: Subtitle, index: number) => {
 
                                 const truncatedText = subTitle.text.length > 30 ?
                                     `${subTitle.text.substring(0, 30)}...` :
@@ -105,9 +131,9 @@ const SubTitleBox = () => {
 
                                         </Td>
                                         <Td>
-                                            <Box 
-                                                display='flex' 
-                                                justifyContent='center' 
+                                            <Box
+                                                display='flex'
+                                                justifyContent='center'
                                                 alignItems='center'
                                             >
                                                 <Tooltip label='edit subtitle'>
@@ -119,17 +145,20 @@ const SubTitleBox = () => {
                                                         }}
                                                     />
                                                 </Tooltip>
-                                                
-                                                <Tooltip label='merge consecutive lines'>
-                                                    <img
-                                                        style={{ marginLeft: '20px' }}
-                                                        src={MergeIcon}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            console.log('merging...')
-                                                        }}
-                                                    />
-                                                </Tooltip>
+
+                                                {
+                                                    index < subTitles.length - 1 &&
+                                                    <Tooltip label='merge consecutive lines'>
+                                                        <img
+                                                            style={{ marginLeft: '20px' }}
+                                                            src={MergeIcon}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                mergeSubTitles(subTitle, index)
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                }
                                             </Box>
                                         </Td>
                                     </Tr>
@@ -143,7 +172,20 @@ const SubTitleBox = () => {
             <ModalEditSubtitle
                 subtitle={modalContent}
                 isOpen={isEditing}
-                onClickClose={() => setIsEditing(false)}
+                onClickClose={() => {
+                    setIsEditing(false);
+                    setModalContent(null);
+                }}
+                saveSubtitle={saveSubtitle}
+            />
+
+            <ModalMergeSubtitle
+                subtitle={modalContent}
+                isOpen={isMerging}
+                onClickClose={() => {
+                    setIsMerging(false);
+                    setModalContent(null);
+                }}
                 saveSubtitle={saveSubtitle}
             />
         </Box>

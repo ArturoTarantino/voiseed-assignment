@@ -13,20 +13,16 @@ import {
 import { useEffect, useState } from 'react';
 import TimePicker from './TimePicker';
 import { timeToSeconds } from '../utils/timeToSeconds';
+import { Subtitle } from './SubTitleBox';
 
 interface Props {
     isOpen: boolean;
     onClickClose: () => void;
     subtitle: SubTitleToEdit | null;
-    saveSubtitle: (subtitle: {
-        start: string;
-        end: string;
-        duration: string;
-        text: string;
-    }, index: number) => void;
+    saveSubtitle: (subtitle: Subtitle, index: number, operation: string) => void;
 }
 
-interface SubTitleToEdit {
+export interface SubTitleToEdit {
     start: string;
     end: string;
     duration: string;
@@ -227,7 +223,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                                     end: subtitleToUpdate.end,
                                     text: subtitleToUpdate.text,
                                     duration: subtitleToUpdate.duration,
-                                }, subtitleToUpdate.index)
+                                }, subtitleToUpdate.index, 'edit')
                             }}
                             disabled={subTitleError.start || subTitleError.end || subTitleError.text}
                         >
