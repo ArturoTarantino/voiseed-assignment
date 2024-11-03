@@ -19,13 +19,14 @@ const Project = () => {
             flexDirection='column'
             justifyContent='space-between'
         >
-            <SimpleGrid
-                columns={10}
-                spacing={10}
-                height={'70%'}
-                width={'100%'}
-            >
-                <SubtitleProvider>
+            <SubtitleProvider>
+                <SimpleGrid
+                    columns={10}
+                    spacing={10}
+                    height={'70%'}
+                    width={'100%'}
+                >
+
                     <Box gridColumn='span 6' height='100%'>
                         <SubTitleBox />
                     </Box>
@@ -33,18 +34,17 @@ const Project = () => {
                     <Box gridColumn='span 4' height='100%'>
                         <VideoPlayer />
                     </Box>
-                </SubtitleProvider>
 
-            </SimpleGrid>
+                </SimpleGrid>
 
-            <SimpleGrid
-                column={1}
-                height={'20%'}
-            >
+                <SimpleGrid
+                    column={1}
+                    height={'20%'}
+                >
+                    <Waveform />
 
-                <Waveform />
-
-            </SimpleGrid>
+                </SimpleGrid>
+            </SubtitleProvider>
         </Box>
     )
 }

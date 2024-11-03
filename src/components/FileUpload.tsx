@@ -37,16 +37,14 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
                 }
                 reader.readAsText(file);
             } else if (file?.type.includes('video/')) {
-
+                
                 reader.onload = (event) => {
-
                     const result = event.target?.result;
-                    if (result && result instanceof ArrayBuffer) {
-                        const blob = new Blob([result], { type: file.type });
-                        localStorage.setItem("video", JSON.stringify(blob));
+                    if (result) {
+                        localStorage.setItem("video", JSON.stringify(result));
                     }
                 };
-                reader.readAsArrayBuffer(file);
+                reader.readAsDataURL(file);
 
                 const videoElement = document.createElement('video');
                 videoElement.src = URL.createObjectURL(file);

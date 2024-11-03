@@ -10,12 +10,11 @@ const VideoPlayer = () => {
     const [subVTTURL, setSubVTTURL] = useState<string | null>(null);
     const playerRef = useRef<ReactPlayer | null>(null);
 
-    const { startTime, setCurrentTime } = useSubtitles();
+    const { startTime, setCurrentTime, setIsVideoPlaying } = useSubtitles();
 
     useEffect(() => {
 
         const subsVTT = convertParsedSRTToVTT(JSON.parse(localStorage.getItem('subtitles') as string));
-        console.log(subsVTT);
         const blob = new Blob([subsVTT], { type: 'text/vtt' });
         const vttUrl = URL.createObjectURL(blob);
         setSubVTTURL(vttUrl);
@@ -69,9 +68,10 @@ const VideoPlayer = () => {
                         }}
                         ref={playerRef}
                         onProgress={handleProgress}
+                        onPlay={() => setIsVideoPlaying(true)}
+                        onPause={() => setIsVideoPlaying(false)}
                     />
                 </div>
-                    // <video style={{ flexGrow: 1 }} src={videoSource} controls width={'100%'}/>
                     : <p>Caricamento video ...</p>
             }
         </Box>
