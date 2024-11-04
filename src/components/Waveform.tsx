@@ -97,8 +97,18 @@ const Waveform = ({ onReady }: Props) => {
 
     return (
         <div>
-            <div ref={waveformContainerRef} style={{ width: '100%', backgroundColor: 'white', borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }} />
-            <div ref={timeLineContainerRef} style={{ width: '100%', backgroundColor: 'white'}} />
+            <div ref={waveformContainerRef}
+                style={{
+                    width: '100%',
+                    height: '150px',
+                    backgroundColor: 'white',
+                }} />
+            <div ref={timeLineContainerRef}
+                style={{
+                    width: '100%',
+                    height: '50px',
+                    backgroundColor: 'white'
+                }} />
         </div>
     )
 }

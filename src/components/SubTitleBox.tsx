@@ -104,7 +104,7 @@ const SubTitleBox = memo(() => {
                 height={'100%'}
                 maxH={'600px'}
                 overflowY="auto"
-                overflowX="hidden"
+                overflowX="auto"
                 padding={'20px 0'}
             >
                 <Table variant='simple'>

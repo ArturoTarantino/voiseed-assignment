@@ -22,7 +22,7 @@ const Project = () => {
             <SubtitleProvider>
                 <SimpleGrid
                     columns={10}
-                    spacing={10}
+                    spacing={5}
                     height={'70%'}
                     width={'100%'}
                 >
@@ -38,7 +38,7 @@ const Project = () => {
                 </SimpleGrid>
 
                 <SimpleGrid
-                    column={1}
+                    columns={1}
                     height={'20%'}
                 >
                     <Waveform />
