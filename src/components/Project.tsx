@@ -39,7 +39,7 @@ const Project = () => {
 
                 <SimpleGrid
                     columns={1}
-                    height={'20%'}
+                    height={'25%'}
                 >
                     <Waveform />
 

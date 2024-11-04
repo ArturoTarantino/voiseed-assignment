@@ -12,34 +12,32 @@ const Waveform = ({ onReady }: Props) => {
 
     const waveSurferRef = useRef<WaveSurfer | null>(null);
     const waveformContainerRef = useRef<HTMLDivElement | null>(null);
-    const timeLineContainerRef = useRef<HTMLDivElement | null>(null);
 
     const { currentTime, isVideoPlaying, setCurrentTime, setStartTime } = useSubtitles();
 
     useEffect(() => {
 
         getVideoFromIndexedDB().then(videoBlob => {
-            if (videoBlob && waveformContainerRef.current && timeLineContainerRef.current) {
+            if (videoBlob && waveformContainerRef.current) {
 
                 const url = URL.createObjectURL(videoBlob);
 
                 const bottomTimeline = TimelinePlugin.create({
-                    container: timeLineContainerRef.current,
-                    height: 50,
+                    height: 30,
                     timeInterval: 0.1,
                     primaryLabelInterval: 1,
                     style: {
-                        fontSize: '15px',
-                        color: '#6A3274',
+                        fontSize: '18px',
+                        color: 'white',
                     },
                 });
 
                 waveSurferRef.current = WaveSurfer.create({
                     container: waveformContainerRef.current,
-                    waveColor: '#007bff',
-                    progressColor: '#ff4d4f',
-                    cursorColor: '#000000',
-                    height: 150,
+                    waveColor: '#3a6ea5',
+                    progressColor: '#004e98',
+                    cursorColor: '#FFF',
+                    height: 180,
                     barWidth: 0,
                     hideScrollbar: true,
                     normalize: true,
@@ -61,15 +59,15 @@ const Waveform = ({ onReady }: Props) => {
                     }
                 });
 
-
                 return () => {
                     URL.revokeObjectURL(url);
-                    waveSurferRef.current?.destroy();
                 };
             }
         }).catch(error => {
             console.error("error loading file", error);
         });
+
+        waveSurferRef.current?.destroy();
 
     }, [onReady, setCurrentTime]);
 
@@ -96,20 +94,14 @@ const Waveform = ({ onReady }: Props) => {
     }, [currentTime]);
 
     return (
-        <div>
-            <div ref={waveformContainerRef}
-                style={{
-                    width: '100%',
-                    height: '150px',
-                    backgroundColor: 'white',
-                }} />
-            <div ref={timeLineContainerRef}
-                style={{
-                    width: '100%',
-                    height: '50px',
-                    backgroundColor: 'white'
-                }} />
-        </div>
+        <div
+            ref={waveformContainerRef}
+            style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#2B2B2B'
+            }}
+        />
     )
 }
 
