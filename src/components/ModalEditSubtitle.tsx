@@ -112,7 +112,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
         }
 
         if (isValid) setSubtitleToUpdate(newSubtitleTime)
-        console.log("Validation Result:", isValid);
+        // console.log("Validation Result:", isValid);
     };
 
     const updateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

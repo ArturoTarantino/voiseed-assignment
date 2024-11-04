@@ -51,10 +51,9 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
             if(isDurationSubValid) {
                 setErrorObject({ sub: false, video: false });
                 onClickClose();
-                // CAN ADD A FAKE LOADING or a SKELETON in state 0 upload
                 startProject();
             } else {
-                // can add message for differentiate errors
+
                 setErrorObject({ sub: true, video: false });
             }
         }
