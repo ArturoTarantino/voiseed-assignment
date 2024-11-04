@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { convertParsedSRTToVTT } from "../utils/parseSRT";
 import { useSubtitles } from "../context/SubtitleContext";
+import { getVideoFromIndexedDB } from "../utils/DBops";
 
 const VideoPlayer = () => {
 
@@ -19,12 +20,21 @@ const VideoPlayer = () => {
         const vttUrl = URL.createObjectURL(blob);
         setSubVTTURL(vttUrl);
 
-        const videoFile = JSON.parse(localStorage.getItem('video') as string);
-        if (!!videoFile) {
-            setVideoSource(videoFile)
-        }
+        getVideoFromIndexedDB().then(videoBlob => {
+            if (videoBlob) {
+                const videoUrl = URL.createObjectURL(videoBlob);
+                setVideoSource(videoUrl);
+            }
+        }).catch(error => {
+            console.error("video not found", error);
+        });
 
-        return () => URL.revokeObjectURL(vttUrl);
+        return () => {
+            URL.revokeObjectURL(vttUrl);
+            if (videoSource) {
+                URL.revokeObjectURL(videoSource);
+            }
+        }
     }, []);
 
     useEffect(() => {

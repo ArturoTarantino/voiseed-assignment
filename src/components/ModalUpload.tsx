@@ -12,6 +12,7 @@ import {
 import FileUpload from './FileUpload';
 import { useEffect, useState } from 'react';
 import { timeToSeconds } from '../utils/timeToSeconds';
+import { getVideoFromIndexedDB } from '../utils/DBops';
 
 interface Props {
     isOpen: boolean;
@@ -32,10 +33,10 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
         setErrorObject({ sub: false, video: false });
     }, [isOpen]);
     
-    const validateUpload = () => {
+    const validateUpload = async () => {
         
         const isSubUploaded = !!localStorage.getItem('subtitles');
-        const isVideoUploaded = !!localStorage.getItem('video');
+        const isVideoUploaded = !!await getVideoFromIndexedDB();
 
         const canStartProject = isSubUploaded && isVideoUploaded;
         console.log(canStartProject);

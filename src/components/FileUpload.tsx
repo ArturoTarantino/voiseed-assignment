@@ -9,6 +9,7 @@ import {
     useState
 } from 'react';
 import { parseSRT } from '../utils/parseSRT';
+import { saveVideoToIndexedDB } from '../utils/DBops';
 
 interface Props {
     labelText: string;
@@ -26,6 +27,7 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
         setFile(e.target.files?.[0]);
     }
 
+
     useEffect(() => {
 
         if (file) {
@@ -37,12 +39,12 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
                 }
                 reader.readAsText(file);
             } else if (file?.type.includes('video/')) {
-                
-                reader.onload = (event) => {
-                    
+
+                reader.onload = async (event) => {
+
                     const result = event.target?.result;
                     if (result) {
-                        localStorage.setItem("video", JSON.stringify(result));
+                        await saveVideoToIndexedDB(file);
                     }
                 };
                 reader.readAsDataURL(file);

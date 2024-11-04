@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 import { useSubtitles } from "../context/SubtitleContext";
+import { getVideoFromIndexedDB } from "../utils/DBops";
 
 interface Props {
     onReady?: (waveSurfer: WaveSurfer) => void;
@@ -17,50 +18,58 @@ const Waveform = ({ onReady }: Props) => {
 
     useEffect(() => {
 
-        const videoFileUrl = JSON.parse(localStorage.getItem('video') as string);
+        getVideoFromIndexedDB().then(videoBlob => {
+            if (videoBlob && waveformContainerRef.current && timeLineContainerRef.current) {
 
-        if (waveformContainerRef.current && timeLineContainerRef.current) {
+                const url = URL.createObjectURL(videoBlob);
 
-            const bottomTimeline = TimelinePlugin.create({
-                container: timeLineContainerRef.current,
-                height: 50,
-                timeInterval: 0.1,
-                primaryLabelInterval: 1,
-                style: {
-                    fontSize: '15px',
-                    color: '#6A3274',
-                },
-            })
-            waveSurferRef.current = WaveSurfer.create({
-                container: waveformContainerRef.current,
-                waveColor: '#007bff',
-                progressColor: '#ff4d4f',
-                cursorColor: '#000000',
-                height: 150,
-                barWidth: 0,
-                hideScrollbar: true,
-                normalize: true,
-                plugins: [bottomTimeline]
-            });
+                const bottomTimeline = TimelinePlugin.create({
+                    container: timeLineContainerRef.current,
+                    height: 50,
+                    timeInterval: 0.1,
+                    primaryLabelInterval: 1,
+                    style: {
+                        fontSize: '15px',
+                        color: '#6A3274',
+                    },
+                });
 
-            waveSurferRef.current.load(videoFileUrl);
-            waveSurferRef.current.setMuted(true);
+                waveSurferRef.current = WaveSurfer.create({
+                    container: waveformContainerRef.current,
+                    waveColor: '#007bff',
+                    progressColor: '#ff4d4f',
+                    cursorColor: '#000000',
+                    height: 150,
+                    barWidth: 0,
+                    hideScrollbar: true,
+                    normalize: true,
+                    plugins: [bottomTimeline]
+                });
 
-            waveSurferRef.current.on('ready', () => {
-                if (onReady && waveSurferRef.current) onReady(waveSurferRef.current);
-            });
+                waveSurferRef.current.load(url);
 
-            waveSurferRef.current.on('click', (progress) => {
-                if (waveSurferRef.current) {
-                    setCurrentTime(progress * waveSurferRef.current.getDuration());
-                    setStartTime(progress * waveSurferRef.current.getDuration());
-                }
-            });
-        }
+                waveSurferRef.current.setMuted(true);
 
-        return () => {
-            waveSurferRef.current?.destroy();
-        };
+                waveSurferRef.current.on('ready', () => {
+                    if (onReady && waveSurferRef.current) onReady(waveSurferRef.current);
+                });
+
+                waveSurferRef.current.on('click', (progress) => {
+                    if (waveSurferRef.current) {
+                        setCurrentTime(progress * waveSurferRef.current.getDuration());
+                        setStartTime(progress * waveSurferRef.current.getDuration());
+                    }
+                });
+
+
+                return () => {
+                    URL.revokeObjectURL(url);
+                    waveSurferRef.current?.destroy();
+                };
+            }
+        }).catch(error => {
+            console.error("error loading file", error);
+        });
 
     }, [onReady, setCurrentTime]);
 
