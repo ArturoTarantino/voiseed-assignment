@@ -81,16 +81,17 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
             />
             <Box>
                 <Button
-                    width='50%'
+                    width='150px'
                     marginTop='10px'
                     onClick={() => fileInputRef.current?.click()}
+                    className='my-btn'
                 >
                     Upload File
                 </Button>
-                {file && <span style={{ marginLeft: '15px', verticalAlign: 'text-top' }} >{file.name}</span>}
+                {file && <span style={{ marginLeft: '15px', verticalAlign: 'text-top', whiteSpace: 'pre-wrap' }} >{file.name}</span>}
             </Box>
             {
-                errorMessage && <div style={{ color: 'red' }}>
+                errorMessage && <div style={{ color: 'red', marginTop: '10px' }}>
                     {acceptedFile === '.srt' ? 'You need to upload an .srt file' : 'You need to upload a video file'}
                 </div>
             }

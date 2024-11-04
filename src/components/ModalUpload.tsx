@@ -6,7 +6,6 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
     Box
 } from '@chakra-ui/react';
 import FileUpload from './FileUpload';
@@ -26,21 +25,21 @@ interface ErrorObject {
 }
 
 const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
-    
+
     const [errorObject, setErrorObject] = useState<ErrorObject>({ sub: false, video: false });
 
     useEffect(() => {
         setErrorObject({ sub: false, video: false });
     }, [isOpen]);
-    
+
     const validateUpload = async () => {
-        
+
         const isSubUploaded = !!localStorage.getItem('subtitles');
         const isVideoUploaded = !!await getVideoFromIndexedDB();
 
         const canStartProject = isSubUploaded && isVideoUploaded;
         console.log(canStartProject);
-        if(!canStartProject) {
+        if (!canStartProject) {
             setErrorObject({ sub: !isSubUploaded, video: !isVideoUploaded });
         } else {
 
@@ -49,7 +48,7 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
             const videoDuration = JSON.parse(localStorage.getItem('videoDuration') as string);
 
             const isDurationSubValid = endTimeLastSub <= videoDuration;
-            if(isDurationSubValid) {
+            if (isDurationSubValid) {
                 setErrorObject({ sub: false, video: false });
                 onClickClose();
                 startProject();
@@ -66,12 +65,13 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
             onClose={onClickClose}
             isCentered
         >
-            <Box style={{ color: 'black' }} >
+            <Box color={'#E0E0E0'}>
 
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>New Project</ModalHeader>
-                    <ModalCloseButton />
+                <ModalContent
+                    bg={"#333333"}
+                >
+                    <ModalHeader color={'#3A6EA5'} >New Project</ModalHeader>
                     <ModalBody
                         display='flex'
                         flexDirection='column'
@@ -92,12 +92,25 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='gray' mr={3} onClick={onClickClose}>
+
+                        <Button
+                            mr={3}
+                            onClick={onClickClose}
+                            variant={'outline'}
+                            sx={{
+                                color: '#E0E0E0',
+                                borderColor: '#666666',
+                                '&:hover': {
+                                    bg: '#333333',
+                                    color: '#E0E0E0',
+                                },
+                            }}
+                        >
                             Close
                         </Button>
-                    
-                        <Button 
-                            colorScheme='gray'
+
+                        <Button
+                            className='my-btn'
                             onClick={validateUpload}
                         >
                             Start

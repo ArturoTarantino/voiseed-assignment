@@ -14,6 +14,27 @@ interface Time {
     seconds: number;
 }
 
+const selectStyles =  {
+    color: '#F5F5F5',
+    border: '1px solid #666666',
+    borderRadius: '4px',
+    padding: '8px',
+    fontSize: '16px',
+    outline: 'none',
+    boxShadow: 'none',
+    '&:hover': {
+        borderColor: '#666666',
+        color: '#FFFFFF',
+    },
+    '& option': {
+        backgroundColor: '#2E2E2E',
+        color: '#F5F5F5',
+        '&:hover': {
+            color: '#FFFFFF',
+        },
+    },
+}
+
 const TimePicker = ({ time, onTimeChange, isError }: Props) => {
 
     const [timeInput, setTimeInput] = useState<Time>(time ?? {
@@ -40,6 +61,8 @@ const TimePicker = ({ time, onTimeChange, isError }: Props) => {
                 <Select
                     value={timeInput?.hours}
                     onChange={(e) => handleTimeChange('hours', Number(e.target.value))}
+                    focusBorderColor='#666666'
+                    sx={selectStyles}
                 >
                     {
                         [...Array(2)].map((_, i) => (
@@ -57,6 +80,8 @@ const TimePicker = ({ time, onTimeChange, isError }: Props) => {
                 <Select
                     value={timeInput?.minutes}
                     onChange={(e) => handleTimeChange('minutes', Number(e.target.value))}
+                    focusBorderColor='#666666'
+                    sx={selectStyles}
                 >
                     {
                         [...Array(60)].map((_, i) => (
@@ -74,6 +99,8 @@ const TimePicker = ({ time, onTimeChange, isError }: Props) => {
                 <Select
                     value={timeInput?.seconds}
                     onChange={(e) => handleTimeChange('seconds', Number(e.target.value))}
+                    focusBorderColor='#666666'
+                    sx={selectStyles}
                 >
                     {
                         [...Array(60)].map((_, i) => (

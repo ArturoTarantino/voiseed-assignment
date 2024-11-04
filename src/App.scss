@@ -3,15 +3,12 @@
 }
 
 .my-btn {
-    padding: 10px 20px;
-    border-radius: 10px;
-    background-color: white;
-    color: black;
-    border: none;
+    background-color: #3A6EA5 !important;
+    color: #E0E0E0 !important;
 }
 
 .project-box {
-    background-color: rgb(37, 36, 36);
+    background-color: #2B2B2B;
     border-radius: 10px;
     padding: 10px;
     height: 100%;
@@ -19,12 +16,40 @@
     thead {
         tr {
             th {
-                color: white;
+                color: #3A6EA5;
             }
         }
     }
 
     tr {
         cursor: pointer;
+    }
+}
+
+.muted-blue-text {
+    color: #3A6EA5
+}
+
+$warm-white: #F5F5F5;
+$medium-gray: #666666;
+
+.time-picker {
+    select {
+        color: $warm-white; // Warm White
+        border: 1px solid $medium-gray !important; // Medium Gray border
+        border-radius: 4px;
+        padding: 8px;
+        font-size: 16px;
+    
+        // Option styles
+        option {
+            background-color: #2E2E2E; // Slightly darker gray for option background
+            color: $warm-white; // Warm White for option text
+    
+            &:hover {
+                background-color: #4C8B82; // Teal on hover for visibility
+                color: #FFFFFF; // White text for contrast
+            }
+        }
     }
 }

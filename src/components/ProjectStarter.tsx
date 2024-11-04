@@ -14,10 +14,6 @@ interface Props {
 
 const ProjectStarter = memo(({ onClickOpen }: Props) => {
 
-  useEffect(() => {
-    console.log('render ProjectStarter');
-  }, [])
-
   return (
     <>
       <Box
@@ -45,6 +41,7 @@ const ProjectStarter = memo(({ onClickOpen }: Props) => {
             maxWidth: '200px',
             marginTop: '20px'
           }}
+          className='my-btn'
           onClick={onClickOpen}
         >
           Create new project

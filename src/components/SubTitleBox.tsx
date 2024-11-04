@@ -98,10 +98,14 @@ const SubTitleBox = memo(() => {
     return (
         <Box
             className='project-box'
-            style={{ padding: 0 }}
+            style={{ padding: 0, height: '100%' }}
         >
             <TableContainer
-                overflow={'hidden'}
+                height={'100%'}
+                maxH={'600px'}
+                overflowY="auto"
+                overflowX="hidden"
+                padding={'20px 0'}
             >
                 <Table variant='simple'>
                     <Thead>
@@ -123,11 +127,11 @@ const SubTitleBox = memo(() => {
                                     null;
 
                                 const isActive = currentTime >= timeToSeconds(subTitle.start) && currentTime <= timeToSeconds(subTitle.end);
-                                
+
                                 return (
                                     <Tr key={index} onClick={() => handleSubtitleClick(subTitle.start)} style={
                                         isActive ? {
-                                            backgroundColor: 'yellow'
+                                            backgroundColor: '#3A6EA5'
                                         } : {}
                                     }>
                                         <Td>{index + 1}</Td>

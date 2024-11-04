@@ -52,12 +52,13 @@ const VideoPlayer = () => {
             className='project-box'
             style={{
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                height: '100%'
             }}
         >
             {
                 videoSource && subVTTURL ?
-                <div style={{ position: 'relative', width: '100%' }} onClick={() => console.log('hello')}>
+                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <ReactPlayer
                         url={videoSource}
                         controls={true}

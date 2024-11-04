@@ -51,7 +51,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
         end: false,
         text: false
     });
-    
+
     useEffect(() => {
 
         setValidateTimeObject({
@@ -117,7 +117,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
 
     const updateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = e.target.value;
-        if(subtitleToUpdate.text.trim().length < 3) setSubTitleError((prevErrors) => ({
+        if (subtitleToUpdate.text.trim().length < 3) setSubTitleError((prevErrors) => ({
             ...prevErrors,
             text: true,
         }));
@@ -133,11 +133,11 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
             onClose={onClickClose}
             isCentered
         >
-            <Box style={{ color: 'black' }} >
+            <Box color={'#E0E0E0'} >
 
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Edit Subtitle #{subtitle.index + 1}</ModalHeader>
+                <ModalContent bg={"#333333"}>
+                    <ModalHeader color={'#3A6EA5'}>Edit Subtitle #{subtitle.index + 1}</ModalHeader>
 
                     <ModalBody
                         display='flex'
@@ -149,6 +149,8 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                             <Text
                                 fontWeight={600}
                                 fontSize={'lg'}
+                                className='muted-blue-text'
+                                mb={2}
                             >
                                 Start time:
                             </Text>
@@ -170,6 +172,8 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                             <Text
                                 fontWeight={600}
                                 fontSize={'lg'}
+                                className='muted-blue-text'
+                                mb={2}
                             >
                                 End time:
                             </Text>
@@ -191,6 +195,8 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                             <Text
                                 fontWeight={600}
                                 fontSize={'lg'}
+                                className='muted-blue-text'
+                                mb={2}
                             >
                                 Text:
                             </Text>
@@ -198,25 +204,44 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                                 value={subtitleToUpdate.text}
                                 onChange={updateText}
                                 isInvalid={!!(subtitleToUpdate.text.trim().length < 3)}
+                                maxH={'300px'}
+                                focusBorderColor='#666666'
+                                borderColor={'#666666'}
+                                sx={{
+                                    _hover: {
+                                        borderColor: '#666666',
+                                    }
+                                }}
                             />
                         </Box>
 
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='gray' mr={3} onClick={() => {
-                            setSubTitleError({
-                                start: false,
-                                end: false,
-                                text: false
-                            })
-                            onClickClose()
-                        }}>
+                        <Button
+                            mr={3}
+                            onClick={() => {
+                                setSubTitleError({
+                                    start: false,
+                                    end: false,
+                                    text: false
+                                })
+                                onClickClose()
+                            }}
+                            variant={'outline'}
+                            sx={{
+                                color: '#E0E0E0',
+                                borderColor: '#666666',
+                                '&:hover': {
+                                    bg: '#333333',
+                                    color: '#E0E0E0',
+                                },
+                            }}
+                        >
                             Close
                         </Button>
 
                         <Button
-                            colorScheme='gray'
                             onClick={() => {
                                 saveSubtitle({
                                     start: subtitleToUpdate.start,
@@ -226,6 +251,7 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                                 }, subtitleToUpdate.index, 'edit')
                             }}
                             disabled={subTitleError.start || subTitleError.end || subTitleError.text}
+                            className='my-btn'
                         >
                             Save
                         </Button>
