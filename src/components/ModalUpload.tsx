@@ -19,17 +19,32 @@ interface Props {
     startProject: () => void;
 }
 
-interface ErrorObject {
-    sub: boolean;
-    video: boolean;
+export interface ErrorObject {
+    sub: UploadError;
+    video: UploadError;
+}
+
+export interface UploadError {
+    value: boolean;
+    text: string | null;
 }
 
 const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
 
-    const [errorObject, setErrorObject] = useState<ErrorObject>({ sub: false, video: false });
+    const intitalError: ErrorObject = {
+        sub: {
+            value: false,
+            text: null
+        },
+        video: {
+            value: false,
+            text: null
+        }
+    }
+    const [errorObject, setErrorObject] = useState<ErrorObject>(intitalError);
 
     useEffect(() => {
-        setErrorObject({ sub: false, video: false });
+        setErrorObject(intitalError);
     }, [isOpen]);
 
     const validateUpload = async () => {
@@ -38,9 +53,20 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
         const isVideoUploaded = !!await getVideoFromIndexedDB();
 
         const canStartProject = isSubUploaded && isVideoUploaded;
-        console.log(canStartProject);
+
         if (!canStartProject) {
-            setErrorObject({ sub: !isSubUploaded, video: !isVideoUploaded });
+            
+            const cantStartError: ErrorObject = {
+                sub: {
+                    value: !isSubUploaded,
+                    text: "Need to upload file!"
+                },
+                video: {
+                    value: !isVideoUploaded,
+                    text: "Need to upload file!"
+                }
+            }
+            setErrorObject(cantStartError);
         } else {
 
             const subtitles = JSON.parse(localStorage.getItem('subtitles') as string);
@@ -49,12 +75,20 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
 
             const isDurationSubValid = endTimeLastSub <= videoDuration;
             if (isDurationSubValid) {
-                setErrorObject({ sub: false, video: false });
+                setErrorObject(intitalError);
                 onClickClose();
                 startProject();
             } else {
 
-                setErrorObject({ sub: true, video: false });
+                setErrorObject((prev) => {
+                    return {
+                        ...prev,
+                        sub: {
+                            value: true,
+                            text: "Your subtitle file duration is longer than video duration!"
+                        }
+                    }
+                });
             }
         }
     }
@@ -81,12 +115,14 @@ const ModalUpload = ({ isOpen, onClickClose, startProject }: Props) => {
                             inputType='file'
                             acceptedFile='.srt'
                             errorMessage={errorObject.sub}
+                            setError={setErrorObject}
                         />
                         <FileUpload
                             labelText='Upload your video file'
                             inputType='file'
                             acceptedFile='video/*'
                             errorMessage={errorObject.video}
+                            setError={setErrorObject}
                         />
 
                     </ModalBody>

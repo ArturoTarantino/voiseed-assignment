@@ -4,29 +4,53 @@ import {
     Box
 } from '@chakra-ui/react';
 import {
+    Dispatch,
+    SetStateAction,
     useEffect,
     useRef,
     useState
 } from 'react';
 import { parseSRT } from '../utils/parseSRT';
 import { saveVideoToIndexedDB } from '../utils/DBops';
+import { ErrorObject, UploadError } from './ModalUpload';
 
 interface Props {
     labelText: string;
     inputType: string;
     acceptedFile: string;
-    errorMessage: boolean;
+    errorMessage: UploadError;
+    setError: Dispatch<SetStateAction<ErrorObject>>;
 }
 
-const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props) => {
+const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage, setError }: Props) => {
 
     const [file, setFile] = useState<File | undefined>(undefined);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFile(e.target.files?.[0]);
+        if (!!e.target.files?.[0] && acceptedFile === '.srt') {
+            setError((prev) => {
+                return {
+                    ...prev,
+                    sub: {
+                        value: false,
+                        text: null
+                    }
+                }
+            })
+        } else if(!!e.target.files?.[0] && acceptedFile.includes('video/')) {
+            setError((prev) => {
+                return {
+                    ...prev,
+                    video: {
+                        value: false,
+                        text: null
+                    }
+                }
+            })
+        }
     }
-
 
     useEffect(() => {
 
@@ -91,8 +115,8 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage }: Props)
                 {file && <span style={{ marginLeft: '15px', verticalAlign: 'text-top', whiteSpace: 'pre-wrap' }} >{file.name}</span>}
             </Box>
             {
-                errorMessage && <div style={{ color: 'red', marginTop: '10px' }}>
-                    {acceptedFile === '.srt' ? 'You need to upload an .srt file' : 'You need to upload a video file'}
+                errorMessage.value && <div style={{ color: 'red', marginTop: '10px' }}>
+                    {errorMessage.text}
                 </div>
             }
         </Box>
