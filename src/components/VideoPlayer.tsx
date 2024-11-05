@@ -11,31 +11,38 @@ const VideoPlayer = () => {
     const [subVTTURL, setSubVTTURL] = useState<string | null>(null);
     const playerRef = useRef<ReactPlayer | null>(null);
 
-    const { startTime, setCurrentTime, setIsVideoPlaying, isUserEditing } = useSubtitles();
+    const { 
+        startTime, 
+        setCurrentTime, 
+        setIsVideoPlaying, 
+        isUserEditing,
+        subTitles
+    } = useSubtitles();
 
     useEffect(() => {
+        if(subTitles) {
 
-        const subsVTT = convertParsedSRTToVTT(JSON.parse(localStorage.getItem('subtitles') as string));
-        const blob = new Blob([subsVTT], { type: 'text/vtt' });
-        const vttUrl = URL.createObjectURL(blob);
-        setSubVTTURL(vttUrl);
+            getVideoFromIndexedDB().then(videoBlob => {
+                if (videoBlob) {
+                    const videoUrl = URL.createObjectURL(videoBlob);
+                    setVideoSource(videoUrl);
 
-        getVideoFromIndexedDB().then(videoBlob => {
-            if (videoBlob) {
-                const videoUrl = URL.createObjectURL(videoBlob);
-                setVideoSource(videoUrl);
-            }
-        }).catch(error => {
-            console.error("video not found", error);
-        });
+                    const subsVTT = convertParsedSRTToVTT(subTitles);
+                    const blob = new Blob([subsVTT], { type: 'text/vtt' });
+                    const vttUrl = URL.createObjectURL(blob);
+                    setSubVTTURL(vttUrl);
 
-        return () => {
-            URL.revokeObjectURL(vttUrl);
-            if (videoSource) {
-                URL.revokeObjectURL(videoSource);
+                }
+            }).catch(error => {
+                console.error("video not found", error);
+            });
+
+            return () => {
+                if(subVTTURL) URL.revokeObjectURL(subVTTURL);
+                if (videoSource) URL.revokeObjectURL(videoSource);
             }
         }
-    }, []);
+    }, [subTitles]);
 
     useEffect(() => {
         if (startTime !== null && playerRef.current) {
@@ -66,6 +73,7 @@ const VideoPlayer = () => {
                 videoSource && subVTTURL ?
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <ReactPlayer
+                        key={subVTTURL}
                         className='react-player'
                         url={videoSource}
                         controls={true}

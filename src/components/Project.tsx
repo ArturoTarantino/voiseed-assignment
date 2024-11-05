@@ -5,9 +5,16 @@ import {
 import SubTitleBox from "./SubTitleBox";
 import VideoPlayer from "./VideoPlayer";
 import Waveform from "./Waveform";
-import { SubtitleProvider } from "../context/SubtitleContext";
+import { useSubtitles } from "../context/SubtitleContext";
+import { useEffect } from "react";
 
 const Project = () => {
+
+    const { setSubTitles } = useSubtitles();
+
+    useEffect(() => {
+        setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
+    }, []);
 
     return (
         <Box
@@ -19,7 +26,6 @@ const Project = () => {
             flexDirection='column'
             justifyContent='space-between'
         >
-            <SubtitleProvider>
                 <SimpleGrid
                     columns={10}
                     spacing={5}
@@ -44,7 +50,6 @@ const Project = () => {
                     <Waveform />
 
                 </SimpleGrid>
-            </SubtitleProvider>
         </Box>
     )
 }

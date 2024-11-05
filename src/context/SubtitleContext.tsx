@@ -3,6 +3,7 @@ import React, {
     useContext,
     useState
 } from 'react';
+import { Subtitle } from '../components/SubTitleBox';
 
 interface SubtitleContextType {
     startTime: number | null;
@@ -13,6 +14,8 @@ interface SubtitleContextType {
     setIsVideoPlaying: (playing: boolean) => void;
     isUserEditing: boolean;
     setIsUserEditing: (isEditing: boolean) => void;
+    subTitles: Subtitle[]
+    setSubTitles: (list: Subtitle[]) => void;
 }
 
 
@@ -24,6 +27,7 @@ export const SubtitleProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
     const [isUserEditing, setIsUserEditing] = useState<boolean>(false);
+    const [subTitles, setSubTitles] = useState<Subtitle[]>([]);
 
     return (
         <SubtitleContext.Provider
@@ -35,7 +39,9 @@ export const SubtitleProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 isVideoPlaying,
                 setIsVideoPlaying,
                 isUserEditing,
-                setIsUserEditing
+                setIsUserEditing,
+                subTitles,
+                setSubTitles
             }}
         >
             {children}

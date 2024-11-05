@@ -4,6 +4,7 @@ import ProjectStarter from './components/ProjectStarter';
 import ModalUpload from './components/ModalUpload';
 import Project from './components/Project';
 import { getVideoFromIndexedDB } from './utils/DBops';
+import { SubtitleProvider } from './context/SubtitleContext';
 
 const App = () => {
   
@@ -32,7 +33,9 @@ const App = () => {
       <div className='App'>
         {
           startProject ?
+          <SubtitleProvider>
             <Project />
+          </SubtitleProvider>
             :
             <ProjectStarter
               onClickOpen={() => setOpenProjectModal(true)}

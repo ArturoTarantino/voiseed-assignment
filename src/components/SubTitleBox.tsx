@@ -31,16 +31,18 @@ interface ModalContent extends Subtitle {
 
 const SubTitleBox = memo(() => {
 
-    const [subTitles, setSubTitles] = useState<Subtitle[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isMerging, setIsMerging] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-    const { setStartTime, currentTime, setIsUserEditing, isVideoPlaying } = useSubtitles();
-
-    useEffect(() => {
-        setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
-    }, []);
+    const { 
+        setStartTime, 
+        currentTime, 
+        setIsUserEditing, 
+        isVideoPlaying, 
+        subTitles, 
+        setSubTitles
+    } = useSubtitles();
 
     const editSubtitle = (subtitle: Subtitle, index: number) => {
 
@@ -75,7 +77,6 @@ const SubTitleBox = memo(() => {
             localStorage.setItem('subtitles', JSON.stringify(updateSubs));
             setSubTitles(updateSubs);
             setIsEditing(false);
-
         } else if (operation === 'merge') {
 
             const updateSubs = [...subTitles]
