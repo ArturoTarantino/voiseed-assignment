@@ -66,6 +66,7 @@ const VideoPlayer = () => {
                 videoSource && subVTTURL ?
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <ReactPlayer
+                        className='react-player'
                         url={videoSource}
                         controls={true}
                         width={'100%'}
