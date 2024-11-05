@@ -39,7 +39,8 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage, setError
                     }
                 }
             })
-        } else if(!!e.target.files?.[0] && acceptedFile.includes('video/')) {
+        } else if (!!e.target.files?.[0] && acceptedFile.includes('video/')) {
+
             setError((prev) => {
                 return {
                     ...prev,
@@ -64,25 +65,18 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage, setError
                 reader.readAsText(file);
             } else if (file?.type.includes('video/')) {
 
-                reader.onload = async (event) => {
-
-                    const result = event.target?.result;
-                    if (result) {
-                        await saveVideoToIndexedDB(file);
-                    }
-                };
-                reader.readAsDataURL(file);
-
-                const videoElement = document.createElement('video');
-                videoElement.src = URL.createObjectURL(file);
-
-                videoElement.onloadedmetadata = function () {
-
-                    const videoDuration = videoElement.duration;
-                    localStorage.setItem("videoDuration", JSON.stringify(videoDuration));
-                    URL.revokeObjectURL(videoElement.src);
-                    videoElement.remove();
-                };
+                saveVideoToIndexedDB(file)
+                    .then(() => {
+                        const videoElement = document.createElement('video');
+                        videoElement.src = URL.createObjectURL(file);
+        
+                        videoElement.onloadedmetadata = function () {
+                            const videoDuration = videoElement.duration;
+                            localStorage.setItem("videoDuration", JSON.stringify(videoDuration));
+                            URL.revokeObjectURL(videoElement.src);
+                            videoElement.remove();
+                        };
+                    }).catch(error => console.error('error upload video', error))
             }
         }
     }, [file]);
