@@ -22,14 +22,10 @@ interface Props {
 
 const ModalMergeSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Props) => {
 
-    if (!subtitle) {
-        return null;
-    }
-
     const [mergedSubtitle, setMergedSubtitle] = useState<Subtitle | null>(null);
 
     useEffect(() => {
-        if(isOpen) {
+        if(isOpen && subtitle) {
             const nextSub = subtitle.subtitlesList[subtitle.index + 1];
             setMergedSubtitle({
                 start: subtitle.start,
@@ -39,6 +35,10 @@ const ModalMergeSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pr
             })
         }
     }, [subtitle]);
+
+    if (!subtitle) {
+        return null;
+    }
 
     return (
         <Modal

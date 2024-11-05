@@ -36,7 +36,7 @@ const SubTitleBox = memo(() => {
     const [isMerging, setIsMerging] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-    const { setStartTime, currentTime } = useSubtitles();
+    const { setStartTime, currentTime, setIsUserEditing, isVideoPlaying } = useSubtitles();
 
     useEffect(() => {
         setSubTitles(JSON.parse(localStorage.getItem('subtitles') as string));
@@ -95,6 +95,12 @@ const SubTitleBox = memo(() => {
         setStartTime(startInSeconds);
     }
 
+    useEffect(() => {
+        if((isEditing || isMerging) && isVideoPlaying) {
+            setIsUserEditing(true);
+        }
+    }, [isEditing, isMerging]);
+
     return (
         <Box
             className='project-box'
@@ -126,7 +132,7 @@ const SubTitleBox = memo(() => {
                                     `${subTitle.text.substring(0, 30)}...` :
                                     null;
 
-                                const isActive = currentTime >= timeToSeconds(subTitle.start) && currentTime <= timeToSeconds(subTitle.end);
+                                const isActive = currentTime >= timeToSeconds(subTitle.start) && currentTime < timeToSeconds(subTitle.end);
 
                                 return (
                                     <Tr key={index} onClick={() => handleSubtitleClick(subTitle.start)} style={
@@ -193,6 +199,7 @@ const SubTitleBox = memo(() => {
                 isOpen={isEditing}
                 onClickClose={() => {
                     setIsEditing(false);
+                    setIsUserEditing(false);
                     setModalContent(null);
                 }}
                 saveSubtitle={saveSubtitle}
@@ -203,6 +210,7 @@ const SubTitleBox = memo(() => {
                 isOpen={isMerging}
                 onClickClose={() => {
                     setIsMerging(false);
+                    setIsUserEditing(false);
                     setModalContent(null);
                 }}
                 saveSubtitle={saveSubtitle}

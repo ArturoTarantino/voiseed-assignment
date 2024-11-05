@@ -11,7 +11,7 @@ const VideoPlayer = () => {
     const [subVTTURL, setSubVTTURL] = useState<string | null>(null);
     const playerRef = useRef<ReactPlayer | null>(null);
 
-    const { startTime, setCurrentTime, setIsVideoPlaying } = useSubtitles();
+    const { startTime, setCurrentTime, setIsVideoPlaying, isUserEditing } = useSubtitles();
 
     useEffect(() => {
 
@@ -46,6 +46,12 @@ const VideoPlayer = () => {
     const handleProgress = (progress: { playedSeconds: number }) => {
         setCurrentTime(progress.playedSeconds)
     }
+
+    useEffect(() => {
+        if(isUserEditing && playerRef.current) {
+            playerRef.current.getInternalPlayer().pause();
+        }
+    }, [isUserEditing]);
 
     return (
         <Box

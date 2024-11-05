@@ -116,7 +116,7 @@ const TimePicker = ({ time, onTimeChange, isError }: Props) => {
             </HStack>
 
             {
-                isError && <div style={{color: 'red'}}>Verify your input</div>
+                isError && <div style={{color: 'red', marginTop: '10px'}}>Verify start and end time of previous or next line</div>
             }
         </>
     );

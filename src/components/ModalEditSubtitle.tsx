@@ -38,14 +38,11 @@ export interface ValidateTime {
 
 const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Props) => {
 
-    if (!subtitle) {
-        return null;
-    }
     const [validateTimeObject, setValidateTimeObject] = useState<ValidateTime>({
         previousEndTime: undefined,
         nextStartTime: undefined
     });
-    const [subtitleToUpdate, setSubtitleToUpdate] = useState<SubTitleToEdit>(subtitle);
+    const [subtitleToUpdate, setSubtitleToUpdate] = useState<SubTitleToEdit | null>(subtitle);
     const [subTitleError, setSubTitleError] = useState<Record<string, boolean>>({
         start: false,
         end: false,
@@ -53,15 +50,18 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
     });
 
     useEffect(() => {
-
-        setValidateTimeObject({
-            previousEndTime: subtitle.index > 0 ? subtitle.subtitlesList[subtitle.index - 1]?.end : undefined,
-            nextStartTime: subtitle.index + 1 < subtitle.subtitlesList.length ? subtitle.subtitlesList[subtitle.index + 1]?.start : undefined
-        });
+        if(subtitle) {
+            setValidateTimeObject({
+                previousEndTime: subtitle.index > 0 ? subtitle.subtitlesList[subtitle.index - 1]?.end : undefined,
+                nextStartTime: subtitle.index + 1 < subtitle.subtitlesList.length ? subtitle.subtitlesList[subtitle.index + 1]?.start : undefined
+            });
+        }
     }, [subtitle]);
 
     useEffect(() => {
-        setSubtitleToUpdate(subtitle);
+        if(subtitle) {
+            setSubtitleToUpdate(subtitle);
+        }
     }, [subtitle]);
 
     const validateTimeInput = (inputTime: {
@@ -70,61 +70,69 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
         seconds: number;
         type: string;
     }) => {
+        if(subtitleToUpdate) {
 
-        const timeInSeconds = inputTime.hours * 3600 + inputTime.minutes * 60 + inputTime.seconds;
-        const previousEndTimeInSeconds = validateTimeObject.previousEndTime
-            ? timeToSeconds(validateTimeObject.previousEndTime)
-            : 0;
-        const nextStartTimeInSeconds = validateTimeObject.nextStartTime
-            ? timeToSeconds(validateTimeObject.nextStartTime)
-            : Infinity;
-
-        const durationInSeconds = JSON.parse(localStorage.getItem('videoDuration') as string);
-
-        let newSubtitleTime = { ...subtitleToUpdate };
-        let isValid = false;
-
-        if (inputTime.type === 'start') {
-
-            isValid = timeInSeconds >= 0 &&
-                timeInSeconds >= previousEndTimeInSeconds &&
-                timeInSeconds < timeToSeconds(subtitleToUpdate.end) && timeInSeconds < nextStartTimeInSeconds;
-
-            setSubTitleError((prevErrors) => ({
-                ...prevErrors,
-                start: !isValid,
-            }));
-
-            newSubtitleTime.start = `${String(inputTime.hours).padStart(2, '0')}:${String(inputTime.minutes).padStart(2, '0')}:${String(inputTime.seconds).padStart(2, '0')}`;
-
-        } else if (inputTime.type === 'end') {
-
-            isValid = timeInSeconds > timeToSeconds(subtitleToUpdate.start) &&
-                timeInSeconds <= durationInSeconds &&
-                timeInSeconds <= nextStartTimeInSeconds;
-
-            setSubTitleError((prevErrors) => ({
-                ...prevErrors,
-                end: !isValid,
-            }));
-
-            newSubtitleTime.end = `${String(inputTime.hours).padStart(2, '0')}:${String(inputTime.minutes).padStart(2, '0')}:${String(inputTime.seconds).padStart(2, '0')}`;
+            const timeInSeconds = inputTime.hours * 3600 + inputTime.minutes * 60 + inputTime.seconds;
+            const previousEndTimeInSeconds = validateTimeObject.previousEndTime
+                ? timeToSeconds(validateTimeObject.previousEndTime)
+                : 0;
+            const nextStartTimeInSeconds = validateTimeObject.nextStartTime
+                ? timeToSeconds(validateTimeObject.nextStartTime)
+                : Infinity;
+    
+            const durationInSeconds = JSON.parse(localStorage.getItem('videoDuration') as string);
+    
+            let newSubtitleTime = { ...subtitleToUpdate };
+            let isValid = false;
+    
+            if (inputTime.type === 'start') {
+    
+                isValid = timeInSeconds >= 0 &&
+                    timeInSeconds >= previousEndTimeInSeconds &&
+                    timeInSeconds < timeToSeconds(subtitleToUpdate.end) && timeInSeconds < nextStartTimeInSeconds;
+    
+                setSubTitleError((prevErrors) => ({
+                    ...prevErrors,
+                    start: !isValid,
+                }));
+    
+                newSubtitleTime.start = `${String(inputTime.hours).padStart(2, '0')}:${String(inputTime.minutes).padStart(2, '0')}:${String(inputTime.seconds).padStart(2, '0')}`;
+    
+            } else if (inputTime.type === 'end') {
+    
+                isValid = timeInSeconds > timeToSeconds(subtitleToUpdate.start) &&
+                    timeInSeconds <= durationInSeconds &&
+                    timeInSeconds <= nextStartTimeInSeconds;
+    
+                setSubTitleError((prevErrors) => ({
+                    ...prevErrors,
+                    end: !isValid,
+                }));
+    
+                newSubtitleTime.end = `${String(inputTime.hours).padStart(2, '0')}:${String(inputTime.minutes).padStart(2, '0')}:${String(inputTime.seconds).padStart(2, '0')}`;
+            }
+    
+            if (isValid) setSubtitleToUpdate(newSubtitleTime)
+            // console.log("Validation Result:", isValid);
         }
-
-        if (isValid) setSubtitleToUpdate(newSubtitleTime)
-        // console.log("Validation Result:", isValid);
     };
 
     const updateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const text = e.target.value;
-        if (subtitleToUpdate.text.trim().length < 3) setSubTitleError((prevErrors) => ({
-            ...prevErrors,
-            text: true,
-        }));
-        setSubtitleToUpdate((prevSub: any) => ({
-            ...prevSub,
-            text: text
-        }));
+        const text = e.target?.value;
+        if(subtitleToUpdate) {
+            if (subtitleToUpdate.text.trim().length < 3) setSubTitleError((prevErrors) => ({
+                ...prevErrors,
+                text: true,
+            }));
+            setSubtitleToUpdate((prevSub: any) => ({
+                ...prevSub,
+                text: text
+            }));
+        }
+    }
+
+    if (!subtitle) {
+        return null;
     }
 
     return (
@@ -201,9 +209,9 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
                                 Text:
                             </Text>
                             <Textarea
-                                value={subtitleToUpdate.text}
+                                value={subtitleToUpdate?.text}
                                 onChange={updateText}
-                                isInvalid={!!(subtitleToUpdate.text.trim().length < 3)}
+                                isInvalid={!!(subtitleToUpdate && subtitleToUpdate.text.trim().length < 3)}
                                 maxH={'300px'}
                                 focusBorderColor='#666666'
                                 borderColor={'#666666'}
@@ -243,12 +251,14 @@ const ModalEditSubtitle = ({ isOpen, onClickClose, subtitle, saveSubtitle }: Pro
 
                         <Button
                             onClick={() => {
-                                saveSubtitle({
-                                    start: subtitleToUpdate.start,
-                                    end: subtitleToUpdate.end,
-                                    text: subtitleToUpdate.text,
-                                    duration: subtitleToUpdate.duration,
-                                }, subtitleToUpdate.index, 'edit')
+                                if(subtitleToUpdate) {
+                                    saveSubtitle({
+                                        start: subtitleToUpdate.start,
+                                        end: subtitleToUpdate.end,
+                                        text: subtitleToUpdate.text,
+                                        duration: subtitleToUpdate.duration,
+                                    }, subtitleToUpdate.index, 'edit')
+                                }
                             }}
                             disabled={subTitleError.start || subTitleError.end || subTitleError.text}
                             className='my-btn'
