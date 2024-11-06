@@ -20,27 +20,33 @@ const VideoPlayer = () => {
     } = useSubtitles();
 
     useEffect(() => {
-        if(subTitles) {
+        let videoUrl: string | null = null;
 
-            getVideoFromIndexedDB().then(videoBlob => {
-                if (videoBlob) {
-                    const videoUrl = URL.createObjectURL(videoBlob);
-                    setVideoSource(videoUrl);
-
-                    const subsVTT = convertParsedSRTToVTT(subTitles);
-                    const blob = new Blob([subsVTT], { type: 'text/vtt' });
-                    const vttUrl = URL.createObjectURL(blob);
-                    setSubVTTURL(vttUrl);
-
-                }
-            }).catch(error => {
-                console.error("video not found", error);
-            });
-
-            return () => {
-                if(subVTTURL) URL.revokeObjectURL(subVTTURL);
-                if (videoSource) URL.revokeObjectURL(videoSource);
+        getVideoFromIndexedDB().then(videoBlob => {
+            if (videoBlob) {
+                videoUrl = URL.createObjectURL(videoBlob);
+                setVideoSource(videoUrl);
             }
+        }).catch(error => console.error("Video not found", error));
+
+        return () => {
+            if (videoUrl) URL.revokeObjectURL(videoUrl);
+        };
+    }, []);
+
+    useEffect(() => {
+
+        if (subTitles) {
+            let vttUrl: string | null = null;
+    
+            const subsVTT = convertParsedSRTToVTT([...subTitles]);
+            const blob = new Blob([subsVTT], { type: 'text/vtt' });
+            vttUrl = URL.createObjectURL(blob);
+            setSubVTTURL(vttUrl);
+    
+            return () => {
+                if (vttUrl) URL.revokeObjectURL(vttUrl);
+            };
         }
     }, [subTitles]);
 
