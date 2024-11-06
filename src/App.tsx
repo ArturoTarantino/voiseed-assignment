@@ -7,10 +7,10 @@ import { getVideoFromIndexedDB } from './utils/DBops';
 import { SubtitleProvider } from './context/SubtitleContext';
 
 const App = () => {
-  
+
   const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
   const [startProject, setStartProject] = useState<boolean>(false);
-  
+
   useEffect(() => {
 
     getVideoFromIndexedDB().then(videoBlob => {
@@ -33,9 +33,11 @@ const App = () => {
       <div className='App'>
         {
           startProject ?
-          <SubtitleProvider>
-            <Project />
-          </SubtitleProvider>
+            <SubtitleProvider>
+              <Project
+                clearProject={() => setStartProject(false)}
+              />
+            </SubtitleProvider>
             :
             <ProjectStarter
               onClickOpen={() => setOpenProjectModal(true)}

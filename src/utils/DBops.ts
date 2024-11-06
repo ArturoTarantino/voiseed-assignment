@@ -16,7 +16,7 @@ export const saveVideoToIndexedDB = async (fileBlob: Blob) => {
     await clearDatabase();
 
     const db = await openDatabase();
-    
+
     const transaction = db.transaction('videos', 'readwrite');
     const store = transaction.objectStore('videos');
 
@@ -39,7 +39,7 @@ const clearDatabase = async () => {
     const db = await openDatabase();
     const transaction = db.transaction('videos', 'readwrite');
     const store = transaction.objectStore('videos');
-    
+
     try {
         await store.clear();
     } catch (error) {
@@ -48,7 +48,7 @@ const clearDatabase = async () => {
     }
 };
 
-export const getVideoFromIndexedDB = async ()  => {
+export const getVideoFromIndexedDB = async () => {
 
     const db = await openDatabase();
     const transaction = db.transaction('videos', 'readonly');
@@ -63,4 +63,15 @@ export const getVideoFromIndexedDB = async ()  => {
         console.error("Error retrieving video from IndexedDB:", error);
         throw error;
     }
+};
+
+export const clearAllData = async () => {
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    const db = await openDB('videoDatabase');
+    db.close();
+
+    indexedDB.deleteDatabase('videoDatabase');
 };
