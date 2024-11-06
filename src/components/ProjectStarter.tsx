@@ -1,8 +1,7 @@
 import {
-  memo,
-  useEffect
+  memo
 } from 'react';
-import Logo from '../assets/revoiceitlogo_600.gif';
+import Logo from '../assets/logo.png';
 import {
   Box,
   Button
@@ -24,7 +23,7 @@ const ProjectStarter = memo(({ onClickOpen }: Props) => {
         height='inherit'
       >
 
-        <img src={Logo} alt="revoiceit logo" style={{ maxWidth: '600px', margin: '0 auto' }} />
+        <img src={Logo} alt="logo" style={{ maxWidth: '600px', margin: '0 auto' }} />
 
         <p
           style={{
@@ -32,7 +31,7 @@ const ProjectStarter = memo(({ onClickOpen }: Props) => {
             marginTop: '20px'
           }}
         >
-          The professional virtual studio for expressive AI voices
+          Virtual Studio for managing subtitles, video playback and waveform analysis
         </p>
 
         <Button
