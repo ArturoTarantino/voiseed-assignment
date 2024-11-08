@@ -58,7 +58,7 @@ const FileUpload = ({ labelText, inputType, acceptedFile, errorMessage, setError
         if (file) {
             const reader = new FileReader();
 
-            if (file?.type === 'application/x-subrip') {
+            if (file?.type === 'application/x-subrip' || (file.type === '' && file.name.endsWith('.srt'))) {
                 reader.onload = (event) => {
                     if (event.target) localStorage.setItem("subtitles", JSON.stringify(parseSRT(event.target.result as string)));
                 }

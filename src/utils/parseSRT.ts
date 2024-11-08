@@ -4,9 +4,11 @@ export const parseSRT = (srtContent: string): {
     duration: string,
     text: string
 }[] | null => {
-    
+
     if (!srtContent) return null;
-    const entries = srtContent.split("\n\n");
+    srtContent = srtContent.replace(/\r\n/g, '\n').trim();
+    const entries = srtContent.split("\n\n").filter(entry => entry.trim() !== '');
+
     return entries.map((entry) => {
         const lines = entry.split("\n");
         const timecodes = lines[1].split(" --> ");
@@ -47,7 +49,7 @@ export const convertParsedSRTToVTT = (parsedSRT: {
     text: string;
 }[]) => {
     let vtt = 'WEBVTT\n\n';
-    
+
     parsedSRT.forEach((subtitle: {
         start: string;
         end: string;
